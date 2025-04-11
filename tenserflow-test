@@ -1,0 +1,46 @@
+# Importer les bibliothèques nécessaires
+import tensorflow as tf
+import matplotlib.pyplot as plt
+import numpy as np
+
+# Charger et préparer les données (images de chiffres)
+(train_images, train_labels), (test_images, test_labels) = tf.keras.datasets.mnist.load_data()
+
+# Normaliser les pixels entre 0 et 1
+train_images = train_images / 255.0
+test_images = test_images / 255.0
+
+# Vérifier la taille des données
+print(train_images.shape)  # Affiche la taille des images d'entraînement
+print(test_images.shape)   # Affiche la taille des images de test
+print(train_labels)        # Affiche les étiquettes des images d'entraînement
+
+# Afficher un exemple d'image d'entraînement
+plt.imshow(train_images[4], cmap="gray")
+plt.show()
+
+# Construire un modèle simple
+my_model = tf.keras.models.Sequential()
+my_model.add(tf.keras.layers.Flatten(input_shape=(28,28))) 
+my_model.add(tf.keras.layers.Dense(128, activation='relu')
+my_model.add(tf.keras.layers.Dense(10, activation='softmax'))
+
+# Compiler le modèle
+my_model.compile(optimizer='adam', loss='sparse_categorical_crossentropy', metrics=['accuracy'])
+
+# Entraîner le modèle sur les données d'entraînement
+my_model.fit(train_images, train_labels, epochs=3)
+
+# Tester le modèle avec les données de test
+val_loss, val_acc = my_model.evaluate(test_images, test_labels)
+print('Précision sur les données de test :', val_acc)
+
+# Faire une prédiction sur une image
+index = 5
+plt.imshow(test_images[index], cmap="gray")
+plt.show()
+
+# Afficher la prédiction
+prediction = my_model.predict(np.expand_dims(test_images[index], axis=0))
+predicted_digit = np.argmax(prediction)
+print(f"Le modèle pense que c’est un : {predicted_digit}")
